@@ -97,17 +97,20 @@ Altera o funcionário com o `id` informado.
 **Schema** 
 ```js
 {
-  "id": 1
+  "id": 1,
   "nomeFunc": "Vinicius Monteiro",
-  "cpf":"52883339990"
-  "situação":"ativa"
-  " telefone ":"11964546800"
-  " cep":"04317245"
-  " rua ":" rua "
-  " cidade ":" cidade "
-  " complemento ":" complemento "
-  " numero ":" numero "
+  "cpf": "52883339990",
+  "situação": "ativa",
+  "telefone": "11964546800",
+  "endereço": {
+    "cep": "04317245",
+    "rua": "rua",
+    "cidade": "cidade",
+    "complemento": "complemento",
+    "numero": "numero"
+  }
 }
+
 
 ```
 
