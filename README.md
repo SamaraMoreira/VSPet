@@ -73,7 +73,6 @@ Altera o funcionário com o `id` informado.
 | campo | tipo | alterável | descrição 
 |-------|------|:-------------:|----------
 | id | number |    ❌    | Número da matrícula do funcionário
-| situação | string |     ✅     | Situação do funcionário em nosso sistema (Ativo/Inativo)
 | nomeFunc | string|    ✅    | Nome completo do funcionário
 | cpf  | string |     ❌     | Número do CPF do funcionário
 | telefone  | string |     ✅     | Número do telefone do funcionário.
@@ -94,13 +93,24 @@ Altera o funcionário com o `id` informado.
 
 ---
 
+`DELETE` /funcionario/{id}
+
+Realiza uma exclusão lógica, onde o funcionário com o `id` informado receberá a situação : INATIVO
+
+**Códigos de status**
+
+`204` Apagado com sucesso
+
+`404` id não encontrado
+
+
 **Schema** 
 ```js
 {
   "id": 1,
   "nomeFunc": "Vinicius Monteiro",
   "cpf": "52883339990",
-  "situação": "ativa",
+  "situação": "ATIVA",
   "telefone": "11964546800",
   "endereço": {
     "cep": "04317245",
@@ -151,7 +161,8 @@ Cadastrar um novo pet.
 | raça | string |     ✅     | Raça do pet.
 | nascimento  | date  |     ✅     | Data de nascimento do pet. 
 | peso |  float  |     ✅     | Peso em kg do pet.
-| Observações | string |     ✅     | Campo para observações sobre o pet.
+| Observações | string |     ❌     | Campo para observações sobre o pet.
+
 
 `PUT` /pet/{id}
 
@@ -197,17 +208,26 @@ Altera o pet com o `id` informado.
 
 `GET`/agendamento
 
-Lista todos os agendamentos cadastrados no sistema.
+Este endpoint lista todos os agendamentos cadastrados no sistema com o status AGENDADO. Você pode filtrar os resultados por data e CPF.
+
+Parâmetros de Consulta:
+
+    data (opcional): Filtra os agendamentos pela data. Use o formato YYYY-MM-DD.
+    cpf (opcional): Filtra os agendamentos pelo CPF do cliente.
+    
+Exemplo:
+
+`GET` /agendamento?data=2024-02-28&cpf=12345678901
 
 **Códigos de status**
 
 `200` sucesso
 
 ---
-// Precisa ser analisado, visto que o agendamento pode ser consultado a partir da data e cpf do responsável
+
 `GET` / agendamento /{id}
 
-Retorna os detalhes de um agendamento com a data e o CPF do responsável informado.
+Retorna os detalhes de um agendamento com o id informado.
 
 **Códigos de status**
 
@@ -219,7 +239,7 @@ Retorna os detalhes de um agendamento com a data e o CPF do responsável informa
 
 `POST` /agendamento
 
-Cadastrar um novo agendamento.
+Cadastrar um novo agendamento, o status do agendamento será AGENDADO
 
 | campo | tipo | obrigatório | descrição 
 |-------|------|:-------------:|----------
@@ -227,6 +247,7 @@ Cadastrar um novo agendamento.
 | idFunc | long |    ✅      | Número da matrícula do funcionário
 | serviço | ENUM | ✅  | Tipo de serviço a ser realizado 
 | data | date|    ✅    | Data e hora que será realizado o agendamento
+
 
 **Códigos de status**
 
@@ -238,7 +259,7 @@ Cadastrar um novo agendamento.
 
 `DELETE` /agendamento/{id}
 
-Apaga o agendamento com o `id` informado.
+Realiza uma exclusão lógica, onde o agendamento com o `id` informado receberá o status : CANCELADO
 
 **Códigos de status**
 
@@ -276,6 +297,7 @@ Altera o agendamento com o `id` informado.
   "idFunc": 1,
   "serviço": "BANHO",
   "data": "2024-04-23T14:25:43Z"
+  "status": AGENDADO
 }
 
 
