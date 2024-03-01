@@ -14,7 +14,7 @@ Software de gerenciamento de petshop.
 
 `GET` /funcionario
 
-Lista todos os funcionários ativos cadastrados no sistema.
+Lista todos os funcionários ativos cadastrados no petshop.
 
 **Códigos de status**
 
@@ -68,7 +68,7 @@ Altera o funcionário com o `id` informado.
 |-------|------|:-------------:|----------
 | idPetShop | Long |  ❌    | id do petshop que o funcionário pertence
 | id | Long |    ❌    | Número da matrícula do funcionário
-| nomeFunc | string|    ✅    | Nome completo do funcionário
+| nome | string|    ✅    | Nome completo do funcionário
 | cpf  | string |     ❌     | Número do CPF do funcionário
 | situacao  | ENUM |     ✅     | Situação do Funcionário , ATIVO ou INATIVO
 | telefone  | string |     ✅     | Número do telefone do funcionário.
@@ -105,7 +105,7 @@ Realiza uma exclusão lógica, onde o funcionário com o `id` informado receber�
 {
   "id_petShop": 1
   "id": 1,
-  "nomeFunc": "Vinicius Monteiro",
+  "nome": "Vinicius Monteiro",
   "cpf": "52883339990",
   "situação": "ATIVO",
   "telefone": "11964546800",
@@ -125,7 +125,16 @@ Realiza uma exclusão lógica, onde o funcionário com o `id` informado receber�
 
 `GET` /pet
 
-Lista todos os pets cadastrados no sistema.
+Este endpoint lista todos os pets cadastrados no petshop. Você pode filtrar os resultados por cpf do responsável e nome do pet.
+
+Parâmetros de Consulta:
+
+    cpf (opcional): Filtra os pets pelo cpf do Responsável.
+    nome (opcional): Filtra os pets pelo nome do pet.
+    
+Exemplo:
+
+`GET` /pet?cpf=812834281&nome=lorena
 
 **Códigos de status**
 
@@ -151,13 +160,13 @@ Cadastrar um novo pet.
 
 | campo | tipo | obrigatório | descrição 
 |-------|------|:-------------:|----------
-| idPetShop | Long |  ❌    | id do petshop que o funcionário pertence
+| idPetShop | Long |  ✅    | id do petshop que o pet pertence
 | nomePet | string|    ✅    | Nome do pet
 | nomeResp | string|    ✅    | Nome completo do responsável pelo pet.
 | cpf  | string |     ✅     | Número do CPF do responsável pelo pet
 | telefone  | string |     ✅     | Número do telefone do responsável pelo pet.
 | raça | string |     ✅     | Raça do pet.
-| nascimento  | date  |     ✅     | Data de nascimento do pet. 
+| nascimento  | ate  |     ✅     | Data de nascimento do pet. 
 | peso |  float  |     ✅     | Peso em kg do pet.
 | Observações | string |     ❌     | Campo para observações sobre o pet.
 
@@ -175,14 +184,14 @@ Altera o pet com o `id` informado.
 
 | campo | tipo | alterável | descrição 
 |-------|------|:-------------:|----------
-| idPetShop | Long |  ❌    | id do petshop que o funcionário pertence
-| idPet | long  |    ❌    | Número da matrícula do pet
+| idPetShop | Long |  ❌    | id do petshop que o pet pertence
+| idPet | Long  |    ❌    | Número da matrícula do pet
 | nomePet | string|    ✅    | Nome do pet
 | nomeResp | string|    ✅    | Nome completo do responsável pelo pet.
 | cpf  | string |     ✅     | Número do CPF do responsável pelo pet
 | telefone  | string |     ✅     | Número do telefone do responsável pelo pet.
 | raça | string |     ❌       | Raça do pet.
-| nascimento  | date  |     ❌     | Data de nascimento do pet. 
+| nascimento  | LocalDate  |     ❌     | Data de nascimento do pet. 
 | peso |  float  |     ✅     | Peso em kg do pet.
 
 **Códigos de status**
@@ -198,7 +207,7 @@ Altera o pet com o `id` informado.
 **Schema** 
 ```js
 {
-  "id_petShop": 1,
+  "id_petshop": 1,
   "id": 1,
   "nomePet": "Low",
   "nomeResp": "Samara Moreira",
@@ -261,7 +270,7 @@ Agendar um novo servico, o status do serviço será AGENDADO
 
 | campo | tipo | obrigatório | descrição 
 |-------|------|:-------------:|----------
-| idPetShop | Long |  ❌    | id do petshop que o serviço pertence
+| idPetShop | Long |  ✅    | id do petshop que o serviço pertence
 | idPet | long  |    ✅   | Número da matrícula do pet
 | idFunc | long |    ✅      | Número da matrícula do funcionário
 | tipo_servico | ENUM | ✅  | Tipo de serviço a ser realizado 
@@ -274,7 +283,7 @@ Agendar um novo servico, o status do serviço será AGENDADO
 
 `400` Validação falhou
 
-`404` pet shop não encontrado
+`404` id não encontrado
 
 ---
 
@@ -284,11 +293,10 @@ Realiza um novo servico, o status do serviço será CONCLUÍDO, esse endpoint te
 
 | campo | tipo | obrigatório | descrição 
 |-------|------|:-------------:|----------
-| idPetShop | Long |  ❌    | id do petshop que o serviço pertence
+| idPetShop | Long |  ✅    | id do petshop que o serviço pertence
 | idPet | long  |    ✅   | Número da matrícula do pet
 | idFunc | long |    ✅      | Número da matrícula do funcionário
 | tipo_servico | ENUM | ✅  | Tipo de serviço a ser realizado 
-| data_hora_servico | LocalDateTime |    ✅    | Data e hora que será realizado o serviço
 
 
 **Códigos de status**
@@ -297,7 +305,7 @@ Realiza um novo servico, o status do serviço será CONCLUÍDO, esse endpoint te
 
 `400` Validação falhou
 
-`404` pet shop não encontrado
+`404` pet shop, funcionário ou pet não encontrado
 
 ---
 
@@ -345,7 +353,7 @@ Altera o servico com o `id` informado.
   "serviço": "BANHO",
   "data_hora_servico": "2024-04-23T14:25:43Z",
   "data_hora_conclusao": "2024-04-23T14:25:43Z"
-  "status": AGENDADO
+  "status": CONCLUIDO
 }
 
 
@@ -371,7 +379,7 @@ Retorna os detalhes de um petshop com o id informado.
 
 Cadastra um novo petshop
 
-| campo | tipo | alterável | descrição 
+| campo | tipo | obrigatório | descrição 
 |-------|------|:-------------:|----------
 | usename | string |  ✅    | username para login na plataforma
 | password | string |  ✅    | password para login na plataforma
@@ -412,6 +420,7 @@ Altera o petshop com o `id` informado.
 
 | campo | tipo | alterável | descrição 
 |-------|------|:-------------:|----------
+| id | Long |  ❌   |  id do pet shop
 | usename | string |  ✅    | username para login na plataforma
 | password | string |  ✅    | password para login na plataforma
 | nome | string|    ✅    | Razão Social do Pet Shop
