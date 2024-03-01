@@ -6,11 +6,9 @@ Software de gerenciamento de petshop.
 - [ ] CRUD Funcionário
 - [ ] CRUD Pet
 - [ ] CRUD Petshop
-- [ ] CRUD Agendamento
+- [ ] CRUD Serviços 
 - [ ] Listagem de serviços diários 
 - [ ] Listagem de serviços gerais 
-- [ ] Dashboard 
-- [ ] Autenticação
 - [ ] Meus dados
 
 ## Endpoints
@@ -358,15 +356,6 @@ Altera o servico com o `id` informado.
 
 ### Pet Shop
 
-`GET`/petshop
-
-Este endpoint lista todos os pet shop cadastrados no sistema.
-
-**Códigos de status**
-
-`200` sucesso
-
----
 
 `GET` /petshop/{id}
 
@@ -385,19 +374,19 @@ Retorna os detalhes de um petshop com o id informado.
 
 Cadastra um novo petshop
 
-| campo | tipo | obrigatório | descrição 
+| campo | tipo | alterável | descrição 
 |-------|------|:-------------:|----------
 | usename | string |  ✅    | username para login na plataforma
 | password | string |  ✅    | password para login na plataforma
-| nome | string|    ✅    | Nome completo do Pet Shop
-| cnpj  | string |     ❌     | Número do CNPJ do Pet Shop
-| telefone  | string |     ✅     | Número do telefone do funcionário.
-| cep | string |     ✅     | Número do cep referente ao endereço do funcionário.
-| estado  | string |     ✅     | Sigla do estado que o funcionário reside.
-| rua | string |     ✅     | Logradouro referente ao endereço do funcionário.
-| cidade  | string |     ✅     | Nome da cidade  que o funcionário reside.
-| complemento | string |     ✅     | Informações adicionais referente ao endereço do funcionário.
-| numero  | string |     ✅     | Número da residência do funcionário.
+| nome | string|    ✅    | Razão Social do Pet Shop
+| cnpj  | string |     ✅     | Número do CNPJ do Pet Shop
+| telefone  | string |     ✅     | Número do telefone para contato.
+| cep | string |     ✅     | Número do cep referente ao endereço
+| estado  | string |     ✅     | Sigla do estado que Petshop está localizado.
+| rua | string |     ✅     | Logradouro referente ao endereço do Petshop
+| cidade  | string |     ✅     | Nome da cidade  que o Petshop está localizado.
+| complemento | string |     ✅  | Informações adicionais referente ao endereço que Petshop está localizado.
+| numero  | string |     ✅     | Número do edifício..
 
 
 **Códigos de status**
@@ -428,15 +417,15 @@ Altera o petshop com o `id` informado.
 |-------|------|:-------------:|----------
 | usename | string |  ✅    | username para login na plataforma
 | password | string |  ✅    | password para login na plataforma
-| nome | string|    ✅    | Nome completo do Pet Shop
+| nome | string|    ✅    | Razão Social do Pet Shop
 | cnpj  | string |     ❌     | Número do CNPJ do Pet Shop
-| telefone  | string |     ✅     | Número do telefone do funcionário.
-| cep | string |     ✅     | Número do cep referente ao endereço do funcionário.
-| estado  | string |     ✅     | Sigla do estado que o funcionário reside.
-| rua | string |     ✅     | Logradouro referente ao endereço do funcionário.
-| cidade  | string |     ✅     | Nome da cidade  que o funcionário reside.
-| complemento | string |     ✅     | Informações adicionais referente ao endereço do funcionário.
-| numero  | string |     ✅     | Número da residência do funcionário.
+| telefone  | string |     ✅     | Número do telefone para contato.
+| cep | string |     ✅     | Número do cep referente ao endereço
+| estado  | string |     ✅     | Sigla do estado que Petshop está localizado.
+| rua | string |     ✅     | Logradouro referente ao endereço do Petshop
+| cidade  | string |     ✅     | Nome da cidade  que o Petshop está localizado.
+| complemento | string |     ✅  | Informações adicionais referente ao endereço que Petshop está localizado.
+| numero  | string |     ✅     | Número do edifício.
 
 **Códigos de status**
 
