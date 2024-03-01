@@ -7,9 +7,6 @@ Software de gerenciamento de petshop.
 - [ ] CRUD Pet
 - [ ] CRUD Petshop
 - [ ] CRUD Serviços 
-- [ ] Listagem de serviços diários 
-- [ ] Listagem de serviços gerais 
-- [ ] Meus dados
 
 ## Endpoints
 
