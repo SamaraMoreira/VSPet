@@ -1,12 +1,14 @@
 package br.com.api.vspet.model.endereco;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record EnderecoDTO(
-    String cep,
-    String estado,
-    String rua,
-    String cidade,
+    @NotBlank String cep,
+    @NotBlank String estado,
+    @NotBlank String rua,
+    @NotBlank String cidade,
     String complemento,
-    String numero
+    @NotBlank String numero
 ) {
     public EnderecoDTO(Endereco endereco){
         this(endereco.getCep(),endereco.getEstado(), endereco.getRua(), endereco.getCidade(), endereco.getComplemento(), endereco.getNumero());
