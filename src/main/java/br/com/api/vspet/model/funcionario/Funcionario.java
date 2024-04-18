@@ -2,6 +2,7 @@ package br.com.api.vspet.model.funcionario;
 
 import br.com.api.vspet.model.endereco.Endereco;
 import br.com.api.vspet.model.petShop.PetShop;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,9 @@ public class Funcionario {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "id_petshop")
+    @JsonManagedReference
+    @ManyToOne
     private PetShop petShop;
 
     @Embedded

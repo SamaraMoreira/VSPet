@@ -2,14 +2,14 @@ package br.com.api.vspet.model.petShop;
 
 
 import br.com.api.vspet.model.endereco.Endereco;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.com.api.vspet.model.funcionario.Funcionario;
+import br.com.api.vspet.model.pet.Pet;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -29,6 +29,15 @@ public class PetShop{
 
     @Embedded
     private Endereco endereco;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "petShop")
+    private List<Funcionario> funcionarios = new ArrayList<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "petShop")
+    private List<Pet> pets = new ArrayList<>();
+
 
     public PetShop(PetShopInputDTO petShop) {
         this.username = petShop.username();
