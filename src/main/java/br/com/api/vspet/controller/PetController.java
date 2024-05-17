@@ -1,9 +1,5 @@
 package br.com.api.vspet.controller;
 
-import br.com.api.vspet.model.funcionario.Funcionario;
-import br.com.api.vspet.model.funcionario.FuncionarioInputDTO;
-import br.com.api.vspet.model.funcionario.FuncionarioResponseDTO;
-import br.com.api.vspet.model.funcionario.FuncionarioUpdateDTO;
 import br.com.api.vspet.model.pet.Pet;
 import br.com.api.vspet.model.pet.PetInputDto;
 import br.com.api.vspet.model.pet.PetResponseDTO;
@@ -24,11 +20,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pets")
@@ -43,16 +46,19 @@ public class PetController {
     @Autowired
     private PetshopRespository petshopRespository;
 
+    @Autowired
+    private PagedResourcesAssembler<Pet> pageAssembler;
+
     @GetMapping
     @Operation(summary = "Lista todos os pets", description = "Endpoint retorna de forma paginada todos os pets cadastrados, por padrão cada pagina contém 10 pets ordenados por nome, mas esses dados de paginação podem ser personalizados.")
-    public ResponseEntity<Page<PetResponseDTO>> index(
+    public PagedModel<EntityModel<Pet>> index(
             @PageableDefault(size = 10, sort = {"nome"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
         log.info("listando todos os pets");
 
-        var page = repository.findAll(pageable).map(PetResponseDTO::new);
+        var page = repository.findAll(pageable);
 
-        return ResponseEntity.ok(page);
+        return pageAssembler.toModel(page,Pet::toEntityModel);
     }
 
     @GetMapping("/{id}")
@@ -61,12 +67,12 @@ public class PetController {
             @ApiResponse(responseCode = "404", description = "pet não encontrado"),
             @ApiResponse(responseCode = "200", description = "pet detalhado com sucesso!")
     })
-    public ResponseEntity<PetResponseDTO> get(@PathVariable Long id){
+    public ResponseEntity<EntityModel<Pet>> get(@PathVariable Long id){
         log.info("buscar pet com o id: {}",id);
 
         Pet pet = repository.getReferenceById(id);
 
-        return ResponseEntity.ok(new PetResponseDTO(pet));
+        return ResponseEntity.ok(pet.toEntityModel());
     }
 
     @GetMapping("/cpf/{cpf}")
@@ -75,12 +81,22 @@ public class PetController {
             @ApiResponse(responseCode = "404", description = "pets não encontrado"),
             @ApiResponse(responseCode = "200", description = "pets detalhados com sucesso!")
     })
-    public ResponseEntity<List<PetResponseDTO>> getByCpf(@PathVariable String cpf){
+    public ResponseEntity<CollectionModel<EntityModel<Pet>>> getByCpf(@PathVariable String cpf){
         log.info("buscar pet com o cpf: {}",cpf);
+        List<Pet> pets = repository.findByCpfResponsavel(cpf);
 
-        List<PetResponseDTO> pets = repository.findByCpfResponsavel(cpf).stream().map(PetResponseDTO::new).toList();
+        if (pets.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.ok(pets);
+        List<EntityModel<Pet>> petModels = pets.stream()
+                .map(Pet::toEntityModel)
+                .collect(Collectors.toList());
+
+        CollectionModel<EntityModel<Pet>> collectionModel = CollectionModel.of(petModels,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(PetController.class).getByCpf(cpf)).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     @PostMapping
@@ -90,14 +106,18 @@ public class PetController {
             @ApiResponse(responseCode = "201", description = "pet cadastrado com sucesso!")
     })
     @Operation(summary = "Cadastra um novo pet no sistema", description = "Endpoint recebe no corpo da requisição um objeto contendo os dados necessários para realizar o cadastro de um novo pet")
-    public ResponseEntity create(@ParameterObject @RequestBody @Valid PetInputDto petInputDto){
+    public ResponseEntity<EntityModel<Pet>> create(@ParameterObject @RequestBody @Valid PetInputDto petInputDto){
         log.info("cadastrando pet: {}", petInputDto);
 
         PetShop petshop = petshopRespository.getReferenceById(petInputDto.id_petshop());
         Pet petSaved = repository.save(new Pet(petshop,petInputDto));
 
-        var uri = buildUri(petSaved);
-        return ResponseEntity.created(uri).build();
+//        var uri = buildUri(petSaved);
+//        return ResponseEntity.created(uri).build();
+
+        return ResponseEntity.created(
+                petSaved.toEntityModel().getLink("self").get().toUri()
+        ).body(petSaved.toEntityModel());
     }
 
     @DeleteMapping("/{id}")
@@ -124,13 +144,13 @@ public class PetController {
     })
     @Operation(summary = "Atualiza um pet no sistema", description = "Endpoint recebe no corpo da requisição um objeto contendo os dados necessários para atualizar os dados de um pet")
 
-    public ResponseEntity<PetResponseDTO> update(@PathVariable Long id, @ParameterObject @RequestBody @Valid PetUpdateDTO petUpdateDTO){
+    public ResponseEntity<EntityModel<Pet>> update(@PathVariable Long id, @ParameterObject @RequestBody @Valid PetUpdateDTO petUpdateDTO){
         log.info("atualizando os dados do pet com o id: {}", id);
 
         Pet pet = repository.getReferenceById(id);
         pet.update(petUpdateDTO);
 
-        return ResponseEntity.ok(new PetResponseDTO(pet));
+        return ResponseEntity.ok(pet.toEntityModel());
     }
 
     public URI buildUri (Pet pet){

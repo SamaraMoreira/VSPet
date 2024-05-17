@@ -1,16 +1,23 @@
 package br.com.api.vspet.model.pet;
 
+import br.com.api.vspet.controller.PetController;
 import br.com.api.vspet.model.petShop.PetShop;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Entity
 @Table(name = "pets")
 @Data
 @NoArgsConstructor
-public class Pet {
+@EqualsAndHashCode(callSuper = false)
+public class Pet extends EntityModel<Pet> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,5 +52,13 @@ public class Pet {
         this.telefone = petUpdateDTO.telefone();
         this.raca = petUpdateDTO.raca();
         this.observacoes = petUpdateDTO.observacoes();
+    }
+    public EntityModel<Pet> toEntityModel() {
+        return EntityModel.of(
+                this,
+                linkTo(methodOn(PetController.class).get(id)).withSelfRel(),
+                linkTo(methodOn(PetController.class).delete(id)).withRel("delete"),
+                linkTo(methodOn(PetController.class).index(null)).withRel("contents")
+        );
     }
 }
